@@ -8,6 +8,9 @@
  * @author Mike Milano <coder1@gmail.com>
  * @project php-igc
  */
+
+namespace IGCReader\Model;
+
 class IGC_C_Record extends IGC_Record
 {
   /**

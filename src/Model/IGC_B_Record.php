@@ -10,6 +10,9 @@
  * @author Mike Milano <coder1@gmail.com>
  * @project php-igc
  */
+
+namespace IGCReader\Model;
+
 class IGC_B_Record extends IGC_Record
 {
   /**
@@ -132,11 +135,11 @@ class IGC_B_Record extends IGC_Record
     }
   }
 
-  /**
-   * Set expected extension fields in the B records
-   *
-   * @param     array  $extensions
-   */
+    /**
+     * Set expected extension fields in the B records
+     *
+     * @param $extension_offsets
+     */
   public static function SetExtensionOffsets($extension_offsets)
   {
     self::$extension_offsets = $extension_offsets;

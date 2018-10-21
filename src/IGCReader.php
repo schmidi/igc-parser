@@ -2,19 +2,23 @@
 /**
  * PHP_IGC
  *
- * This class is instanciated with the file path of the IGC file. It
+ * This class is instantiated with the file path of the IGC file. It
  * will create an array of IGC record objects for convenient use of the data.
  *
  * @version 0.1
  * @author Mike Milano <coder1@gmail.com>
  * @project php-igc
  */
-class PHP_IGC
+
+namespace IGCReader;
+
+
+class IGCReader
 {
   /**
    * The date and time of the flight
    * @access public
-   * @var DateTime
+   * @var \DateTime
    */
   public $datetime;
 
@@ -67,6 +71,8 @@ class PHP_IGC
    */
   public $duration;
 
+  private $records = array();
+
   /**
    * Class constructor creates the PHP_IGC object from a file path.
    *
@@ -74,25 +80,25 @@ class PHP_IGC
    */
   public function __construct($file_path)
   {
-    spl_autoload_register('self::ClassAutoloader');
     $handle = @fopen($file_path, "r");
     if ($handle) {
       while (($buffer = fgets($handle)) !== FALSE) {
         $this->records[] = $this->getRecord($buffer);
       }
+      $this->setDetails();
     }
-    spl_autoload_unregister('self::ClassAutoloader');
+
   }
 
   /**
    * Returns an IGC record object
    *
    * @param        string          $string is the raw record line from an IGC file
-   * @return       IGC_Record      Returns the specific IGC_Record object or false if the record isn't supported.
+   * @return       \IGCReader\Model\IGC_Record      Returns the specific IGC_Record object or false if the record isn't supported.
    */
   public function getRecord($string) {
 
-    $classname = 'IGC_'.strtoupper(substr($string,0,1)).'_Record';
+    $classname = '\IGCReader\Model\IGC_'.strtoupper(substr($string,0,1)).'_Record';
     return new $classname($string);
   }
 
@@ -106,7 +112,7 @@ class PHP_IGC
 
     // set lowest and highest altitude
     if (is_array($this->records)) {
-      $this->datetime = new DateTime("1970-01-01");
+      $this->datetime = new \DateTime("1970-01-01");
       $start_found = false;
 
       foreach ($this->records as $each) {
@@ -146,59 +152,24 @@ class PHP_IGC
     }
   }
 
-  /**
-   * Returns the HTML and Javascript to draw the path over GoogleMaps
-   *
-   * @param        string  $key is the GoogleAPI developer key
-   * @param        integer $width in pixels
-   * @param        integer $height in pixels
-   * @return       string  Returns HTML, CSS, and JavaScript
-   */
-  public function getMap($key, $width, $height)
-  {
-    if (count($this->records)<1) {
-      $code = "invalid file";
-      return $code;
-    }
+  public function getTrackPoints() {
 
-    $code = '<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key='.$key.'" type="text/javascript"></script>
-<br /><br />
-<div id="map" style="width: '.$width.'px; height: '.$height.'px; border: 2px solid #111111;"></div>
-
-<script type="text/javascript">
-function loadIGC() {
-
-        var map = new GMap2(document.getElementById("map"));
-        map.addControl(new GSmallMapControl());
-        map.addControl(new GMapTypeControl());
-        ';
-
-    $started = false;
-    foreach ($this->records as $each) {
-
-      if ($each->type == "B") {
-
-        if (!$started) {
-          $code .= "map.setCenter(new GLatLng(".$each->latitude['decimal_degrees'].", ".$each->longitude['decimal_degrees']."), 13, G_SATELLITE_MAP);\n";
-          $code .= "var polyline = new GPolyline([\n";
-          $started = true;
-        }
-
-        $code .= "new GLatLng(".$each->latitude['decimal_degrees'].", ".$each->longitude['decimal_degrees']."),\n";
+      if (count($this->records)<1) {
+          throw new \Exception("Invalid File");
       }
-    }
 
-    $code .= '
-        ], "#FF0000", 2);
-        map.addOverlay(polyline);
+      $trackPoints = array();
 
-        }
+      foreach ($this->records as $each) {
 
-    window.onload = loadIGC;
-    </script>';
+          if ($each->type == "B") {
 
-    return $code;
+            array_push($trackPoints, array( "lat" => $each->latitude['decimal_degrees'], "long" => $each->longitude['decimal_degrees']));
 
+          }
+      }
+
+      return $trackPoints;
   }
 
   /**
@@ -240,10 +211,6 @@ function loadIGC() {
     return $man[(string)$code];
   }
 
-  private static function ClassAutoloader($class_name)
-  {
-    require(dirname(__FILE__).DIRECTORY_SEPARATOR.
-            "lib".DIRECTORY_SEPARATOR.$class_name.".php");
-  }
+
 }
-?>
+
