@@ -1,6 +1,7 @@
 {
-    "name": "schmidi/php-igc",
-    "description": "IGC file processing, forked from ",
+    "name": "schmidi/igc-parser",
+    "description": "IGC file processing",
+    "version": "0.2",
     "type": "library",
     "authors": [
       {
@@ -16,7 +17,7 @@
     },
     "autoload": {
       "psr-4": {
-        "IGCReader\\": "src/"
+        "IGCParser\\": "src/IGCParser/"
       }
     }
 
