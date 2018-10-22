@@ -16,7 +16,6 @@ final class IGCParserTest extends TestCase {
         $this->assertNotNull($igcFile);
         $this->assertEquals("Tobias Schmid", $igcFile->pilot);
         $this->assertEquals("Ozone Jomo", $igcFile->glider_type);
-        //$this->assertEquals("SKYTRAXX", $igcFile->manufacturer);
 
         var_dump($igcFile);
 

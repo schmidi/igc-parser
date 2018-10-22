@@ -99,7 +99,7 @@ class IGCParser
         $handle = @fopen($file_path, "r");
         if ($handle) {
             while (($line = fgets($handle)) !== FALSE) {
-                $this->records[] = IGCParser::parseRecord($line);
+                $this->records[] = IGCParser::parseRecord(rtrim($line));
             }
             $this->initializeProperties();
         }
@@ -120,7 +120,7 @@ class IGCParser
         if(isset($string)) {
 
             foreach(preg_split("/((\r?\n)|(\r\n?))/", $igc_string) as $line) {
-                $this->records[] = IGCParser::parseRecord($line);
+                $this->records[] = IGCParser::parseRecord(rtrim($line));
             }
 
             $this->initializeProperties();
@@ -161,7 +161,9 @@ class IGCParser
                             substr($each->value, 2, 2),
                             substr($each->value, 0, 2));
                     } elseif ($each->tlc == 'PLT') {
-                        $this->pilot = ucwords(strtolower($each->value));
+                        $this->pilot = ucwords(strtolower(trim($each->value)));
+                    } elseif ($each->tlc == 'GTY') {
+                        $this->glider_type = ucwords(strtolower(trim($each->value)));
                     }
                 } elseif ($each->type == 'B') {
                     $record_time = clone $this->datetime;
