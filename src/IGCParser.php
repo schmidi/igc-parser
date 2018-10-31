@@ -61,11 +61,14 @@ class IGCParser
 
     protected function createFromString($igc_string) {
 
-        if(isset($string)) {
+        if(isset($igc_string)) {
             $records = array();
 
-            foreach(preg_split("/((\r?\n)|(\r\n?))/", $igc_string) as $line) {
-                $records[] = IGCParser::parseRecord(rtrim($line));
+            foreach(preg_split("/(\r\n|\n|\r)/", $igc_string) as $line) {
+                if(!empty($line)) {
+                    $records[] = IGCParser::parseRecord(rtrim($line));
+                }
+
             }
 
             return new IGCObject($records);
@@ -81,7 +84,6 @@ class IGCParser
      */
     public static function parseRecord($string)
     {
-
         $classname = '\\' . __NAMESPACE__ . '\Record\IGC_' . strtoupper(substr($string, 0, 1)) . '_Record';
         return new $classname($string);
     }
