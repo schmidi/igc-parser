@@ -9,7 +9,7 @@
  * @project php-igc
  */
 
-namespace IGCParser\Model;
+namespace IGCParser\Record;
 
 class IGC_D_Record extends IGC_Record
 {

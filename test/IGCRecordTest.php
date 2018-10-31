@@ -11,7 +11,7 @@ final class IGCRecordTest extends TestCase {
 
     public function testARecord() {
 
-        $aRecord = new \IGCParser\Model\IGC_A_Record("AXSX001 SKYTRAXX V1.89 SN:2956932040");
+        $aRecord = new \IGCParser\Record\IGC_A_Record("AXSX001 SKYTRAXX V1.89 SN:2956932040");
 
         $this->assertNotNull($aRecord);
         $this->assertEquals("AXSX001 SKYTRAXX V1.89 SN:2956932040", $aRecord->raw);
@@ -25,7 +25,7 @@ final class IGCRecordTest extends TestCase {
     public function testHRecord() {
 
         $inputString = "HOPLTPILOT: Tobias Schmid";
-        $hRecord = new \IGCParser\Model\IGC_H_Record($inputString);
+        $hRecord = new \IGCParser\Record\IGC_H_Record($inputString);
 
         $this->assertEquals("H", $hRecord->type);
         $this->assertEquals($inputString, $hRecord->raw);
@@ -36,7 +36,7 @@ final class IGCRecordTest extends TestCase {
 
 
         $inputString = "HOGTYGLIDERTYPE: Ozone Jomo";
-        $hRecord = new \IGCParser\Model\IGC_H_Record($inputString);
+        $hRecord = new \IGCParser\Record\IGC_H_Record($inputString);
 
         $this->assertEquals("H", $hRecord->type);
         $this->assertEquals($inputString, $hRecord->raw);
