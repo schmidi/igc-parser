@@ -3,6 +3,7 @@
     "description": "IGC file processing",
     "version": "0.2",
     "type": "library",
+    "license": "GPL-2.0-or-later",
     "authors": [
       {
         "name": "Tobias Schmid",
