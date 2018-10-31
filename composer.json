@@ -1,24 +1,24 @@
 {
-    "name": "schmidi/igc-parser",
-    "description": "IGC file processing",
-    "version": "0.2",
-    "type": "library",
-    "authors": [
-      {
-        "name": "Tobias Schmid",
-        "email": "schmid.tobias@bluewin.ch"
-      }
-    ],
-    "require-dev": {
-        "phpunit/phpunit": "^7.4"
-    },
-    "require": {
-        "php": ">=7.0.0"
-    },
-    "autoload": {
-      "psr-4": {
-        "IGCParser\\": "src/IGCParser/"
-      }
+  "name": "schmidi/igc-parser",
+  "description": "IGC file processing",
+  "version": "0.2",
+  "type": "library",
+  "license": "GPL-2.0-or-later",
+  "authors": [
+    {
+      "name": "Tobias Schmid",
+      "email": "schmid.tobias@bluewin.ch"
     }
-
+  ],
+  "require": {
+    "php": ">=7.0.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^7.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "IGCParser\\": "src/"
+    }
+  }
 }
