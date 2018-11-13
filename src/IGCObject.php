@@ -146,11 +146,15 @@ class IGCObject
 
         $trackPoints = array();
 
-        foreach ($this->records as $each) {
+        foreach ($this->records as $current) {
 
-            if ($each->type == "B") {
+            if ($current->type == "B") {
 
-                array_push($trackPoints, array("lat" => $each->latitude['decimal_degrees'], "long" => $each->longitude['decimal_degrees']));
+                array_push($trackPoints, [
+                    "lat" => $current->latitude['decimal_degrees'],
+                    "long" => $current->longitude['decimal_degrees'],
+                    "pressure_altitude" => $current->pressure_altitude
+                ]);
 
             }
         }
