@@ -126,9 +126,9 @@ class IGCObject
 
         $trackPoints = array();
 
-        foreach ($this->records as $each) {
+        foreach ($this->records as $current) {
 
-            if ($each->type == "B") {
+            if ($current->type == "B") {
 
                 $trackPoint = new TrackPoint(
                     $each->latitude['decimal_degrees'],
