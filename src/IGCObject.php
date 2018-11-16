@@ -13,7 +13,7 @@ class IGCObject
      * @access public
      * @var \DateTime
      */
-    public $datetime;
+    public $start_datetime;
 
     /**
      * The Pilot's name
@@ -66,6 +66,8 @@ class IGCObject
 
     private $records = array();
 
+    private $start_found = false;
+
     /**
      * IGCObject constructor.
      * @param array $records
@@ -99,35 +101,13 @@ class IGCObject
 
         // set lowest and highest altitude
         if (is_array($this->records)) {
-            $this->datetime = new \DateTime("1970-01-01");
-            $start_found = false;
+            $this->start_datetime = new \DateTime("1970-01-01");
 
-            foreach ($this->records as $each) {
-                if ($each->type == 'H') {
-                    if ($each->tlc == 'DTE') {
-                        $this->datetime->setDate('20' . substr($each->value, 4, 2),
-                            substr($each->value, 2, 2),
-                            substr($each->value, 0, 2));
-                    } elseif ($each->tlc == 'PLT') {
-                        $this->pilot = ucwords(strtolower(trim($each->value)));
-                    } elseif ($each->tlc == 'GTY') {
-                        $this->glider_type = ucwords(strtolower(trim($each->value)));
-                    }
-                } elseif ($each->type == 'B') {
-                    $record_time = clone $this->datetime;
-                    $record_time->setTime($each->time_array['h'],
-                        $each->time_array['m'],
-                        $each->time_array['s']);
-                    if (!$start_found) {
-                        $start_found = true;
-                        $this->datetime = $record_time;
-                    }
-                    $this->duration = $record_time->getTimestamp() - $this->datetime->getTimestamp();
-                    if ($each->pressure_altitude > $this->max_altitude) {
-                        $this->max_altitude = $each->pressure_altitude;
-                    } elseif ($each->pressure_altitude < $this->min_altitude) {
-                        $this->min_altitude = $each->pressure_altitude;
-                    }
+            foreach ($this->records as $current_record) {
+                if ($current_record->type == 'H') {
+                    $this->processHTypes($current_record);
+                } elseif ($current_record->type == 'B') {
+                    $this->processBTypes($current_record);
                 }
             }
         }
@@ -139,9 +119,10 @@ class IGCObject
     }
 
     /**
+     * @param int $epsilon optimization factor
      * @return array of track points
      */
-    public function getTrackPoints()
+    public function getTrackPoints($epsilon = 0)
     {
 
         $trackPoints = array();
@@ -150,16 +131,57 @@ class IGCObject
 
             if ($current->type == "B") {
 
-                array_push($trackPoints, [
-                    "lat" => $current->latitude['decimal_degrees'],
-                    "long" => $current->longitude['decimal_degrees'],
-                    "pressure_altitude" => $current->pressure_altitude
-                ]);
+                $trackPoint = new TrackPoint(
+                    $each->latitude['decimal_degrees'],
+                    $each->longitude['decimal_degrees'],
+                    $each->pressure_altitude);
+
+                array_push($trackPoints, $trackPoint);
 
             }
         }
 
+        if($epsilon > 0) {
+            $trackPoints = RDPLineSimplification::RDPLineSimplification($trackPoints, $epsilon);
+        }
+
         return $trackPoints;
+    }
+
+    /**
+     * @param $record
+     */
+    private function processHTypes($record)
+    {
+        if ($record->tlc == 'DTE') {
+            $this->start_datetime->setDate('20' . substr($record->value, 4, 2),
+                substr($record->value, 2, 2),
+                substr($record->value, 0, 2));
+        } elseif ($record->tlc == 'PLT') {
+            $this->pilot = ucwords(strtolower(trim($record->value)));
+        } elseif ($record->tlc == 'GTY') {
+            $this->glider_type = ucwords(strtolower(trim($record->value)));
+        }
+    }
+
+    /**
+     * @param $record
+     * @param $start_found
+     */
+    private function processBTypes($record)
+    {
+        $record_time = clone $this->start_datetime;
+        $record_time->setTime($record->time_array['h'], $record->time_array['m'], $record->time_array['s']);
+        if (!$this->start_found) {
+            $this->start_found = true;
+            $this->start_datetime = $record_time;
+        }
+        $this->duration = $record_time->getTimestamp() - $this->start_datetime->getTimestamp();
+        if ($record->pressure_altitude > $this->max_altitude) {
+            $this->max_altitude = $record->pressure_altitude;
+        } elseif ($record->pressure_altitude < $this->min_altitude) {
+            $this->min_altitude = $record->pressure_altitude;
+        }
     }
 
 
