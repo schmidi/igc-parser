@@ -79,12 +79,12 @@ class RDPLineSimplification
         {
             // Recursive call
 
-            $recResults1 = self::RDPLineSimplification(array_slice($pointList, 0, $index+1), $epsilon));
-            $recResults2 = self::RDPLineSimplification(array_slice($pointList, $index, $end + $index+1), $epsilon));
+            $recResults1 = self::RDPLineSimplification(array_slice($pointList, 0, $index+1), $epsilon);
+            $recResults2 = self::RDPLineSimplification(array_slice($pointList, $index, $end + $index+1), $epsilon);
 
             $resultList = array_merge(
-                array_slice($recResults1, 0, count($recResults1) - 1),
-                array_slice($recResults2, 0, count($recResults2) -1)
+                array_slice($recResults1, 0, count($recResults1) -1),
+                array_slice($recResults2, 0, count($recResults2))
                 );
 
         }

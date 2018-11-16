@@ -119,9 +119,10 @@ class IGCObject
     }
 
     /**
+     * @param int $epsilon optimization factor
      * @return array of track points
      */
-    public function getTrackPoints()
+    public function getTrackPoints($epsilon = 0)
     {
 
         $trackPoints = array();
@@ -138,6 +139,10 @@ class IGCObject
                 array_push($trackPoints, $trackPoint);
 
             }
+        }
+
+        if($epsilon > 0) {
+            $trackPoints = RDPLineSimplification::RDPLineSimplification($trackPoints, $epsilon);
         }
 
         return $trackPoints;
