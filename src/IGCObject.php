@@ -132,9 +132,9 @@ class IGCObject
             if ($current->type == "B") {
 
                 $trackPoint = new TrackPoint(
-                    $each->latitude['decimal_degrees'],
-                    $each->longitude['decimal_degrees'],
-                    $each->pressure_altitude);
+                    $current->latitude['decimal_degrees'],
+                    $current->longitude['decimal_degrees'],
+                    $current->pressure_altitude);
 
                 array_push($trackPoints, $trackPoint);
 
