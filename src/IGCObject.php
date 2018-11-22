@@ -131,10 +131,13 @@ class IGCObject
 
             if ($current->type == "B") {
 
+                $currentDateTime = $this->start_datetime->setTime((int) $current->time_array['h'], (int) $current->time_array['m'], (int) $current->time_array['s']);
+
                 $trackPoint = new TrackPoint(
                     $current->longitude['decimal_degrees'],
                     $current->latitude['decimal_degrees'],
-                    $current->pressure_altitude);
+                    $current->pressure_altitude,
+                    $currentDateTime->getTimestamp());
 
                 array_push($trackPoints, $trackPoint);
 
